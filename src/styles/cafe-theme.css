@@ -1,0 +1,102 @@
+:root {
+  --cafe-oscuro: #3E2723;
+  --cafe-medio: #5D4037;
+  --cafe-claro: #8D6E63;
+  --cafe-dorado: #D7CCC8;
+  --crema: #FFF8F0;
+  --verde-cafe: #2E7D32;
+  --texto-oscuro: #2D2D2D;
+  --texto-claro: #5A5A5A;
+}
+
+.cafe-theme {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--crema);
+}
+
+.cafe-navbar {
+  background: linear-gradient(135deg, var(--cafe-oscuro), var(--cafe-medio));
+  border-bottom: 1px solid var(--cafe-dorado);
+}
+
+.hero-section {
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3') center/cover;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  margin-top: 76px;
+}
+
+.btn-cafe-primary {
+  background: linear-gradient(135deg, var(--cafe-medio), var(--cafe-oscuro));
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+}
+
+.btn-outline-cafe-light {
+  border: 2px solid var(--cafe-dorado);
+  color: var(--cafe-dorado);
+  background: transparent;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+}
+
+.text-cafe-oscuro { color: var(--cafe-oscuro); }
+.text-cafe-medio { color: var(--cafe-medio); }
+.text-cafe-claro { color: var(--cafe-claro); }
+.text-cafe-dorado { color: var(--cafe-dorado); }
+.bg-crema { background-color: var(--crema); }
+
+.product-card {
+  transition: all 0.3s ease;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.card-img-wrapper {
+  height: 250px;
+  overflow: hidden;
+}
+
+.product-image {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-category {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.border-cafe-claro {
+  border-color: var(--cafe-claro) !important;
+}
+
+.page-cafe .page-link {
+  color: var(--cafe-medio);
+  border-color: var(--cafe-claro);
+}
+
+.page-cafe .page-link:hover {
+  background-color: var(--cafe-dorado);
+  border-color: var(--cafe-medio);
+  color: var(--cafe-oscuro);
+}
+
+.bg-verde-cafe {
+  background-color: var(--verde-cafe) !important;
+}

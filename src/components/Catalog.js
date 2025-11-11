@@ -24,6 +24,7 @@ function Catalog() {
   
   const pageSize = 9; 
 
+
   const fetchProducts = useCallback(async (page = 0, params = {}) => {
     const productsUrl = '/productos';
     try {
@@ -45,15 +46,22 @@ function Catalog() {
     fetchProducts(); 
   }, [fetchProducts]);
 
-  const handleSearch = (e) => {
-    e.preventDefault(); 
-    setCurrentPage(0); 
-    fetchProducts(0, {
-      nombre: searchTerm || null,
-      precioMin: minPrice || null,
-      precioMax: maxPrice || null
+const handleSearch = (e) => {
+  e.preventDefault(); 
+  setCurrentPage(0); 
+  
+  if (searchTerm && /[áéíóúÁÉÍÓÚ]/.test(searchTerm)) {
+    toast('💡 Tip: Para mejores resultados, busca sin tildes (ej: "cafe" en lugar de "café")', {
+      duration: 4000,
     });
-  };
+  }
+  
+  fetchProducts(0, {
+    nombre: searchTerm || null,
+    precioMin: minPrice || null,
+    precioMax: maxPrice || null
+  });
+};
   
   const clearFilters = () => {
     setSearchTerm('');
@@ -66,7 +74,7 @@ function Catalog() {
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
       fetchProducts(newPage, {
-        nombre: searchTerm || null,
+        nombre: searchTerm || null, 
         precioMin: minPrice || null,
         precioMax: maxPrice || null
       });
@@ -91,128 +99,172 @@ function Catalog() {
 
   if (loading) {
     return (
-      <Container className="text-center mt-5">
-        <Spinner animation="border" role="status" variant="primary">
+      <Container className="text-center mt-5 pt-5">
+        <Spinner animation="border" role="status" className="text-cafe-medio" style={{ width: '3rem', height: '3rem' }}>
           <span className="visually-hidden">Cargando...</span>
         </Spinner>
-        <p>Cargando cafés...</p>
+        <p className="mt-3 text-texto-claro">Cargando nuestros cafés premium...</p>
       </Container>
     );
   }
 
   if (error) {
     return (
-      <Container className="text-center mt-5">
-        <p className="text-danger">{error}</p>
+      <Container className="text-center mt-5 pt-5">
+        <div className="alert alert-danger">
+          <i className="fas fa-exclamation-triangle me-2"></i>
+          {error}
+        </div>
       </Container>
     );
   }
 
   return (
-    <Container className="mt-4">
-      <h2 className="mb-4">Nuestro Catálogo de Cafés</h2>
+    <Container className="mt-5 pt-4">
+      <div className="text-center mb-5">
+        <h1 className="display-5 fw-bold text-cafe-oscuro mb-3">Nuestro Catálogo Premium</h1>
+        <p className="lead text-texto-claro">Descubre la selección más exclusiva de cafés de origen único</p>
+      </div>
       
-      <Form onSubmit={handleSearch} className="p-3 mb-4" style={{ border: '1px solid #ddd', borderRadius: '8px', background: '#f8f9fa' }}>
-        <Row className="g-2 align-items-end">
-          <Col md={5}>
-            <Form.Label>Buscar por Nombre</Form.Label>
-            <Form.Control 
-              type="text" 
-              placeholder="Ej: Etiopía Yirgacheffe" 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </Col>
-          <Col md={2}>
-            <Form.Label>Precio Mín.</Form.Label>
-            <Form.Control 
-              type="number" 
-              placeholder="CLP $" 
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-            />
-          </Col>
-          <Col md={2}>
-            <Form.Label>Precio Máx.</Form.Label>
-            <Form.Control 
-              type="number" 
-              placeholder="CLP $" 
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-            />
-          </Col>
-          <Col md={3}>
-            <Button type="submit" className="w-100">Buscar</Button>
-            <Button variant="secondary" type="button" onClick={clearFilters} className="w-100 mt-2">Limpiar</Button>
-          </Col>
-        </Row>
-      </Form>
-
-      <Row>
-        {products.length === 0 ? (
-          <Col>
-            <p>No se encontraron productos con esos filtros.</p>
-          </Col>
-        ) : (
-          products.map(product => (
-            <Col md={4} lg={3} className="mb-4" key={product.id}>
-              <Card className="h-100">
-                <Card.Img 
-                  variant="top" 
-                  src={product.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'} 
-                  style={{ height: '200px', objectFit: 'cover' }}
+      <Card className="shadow-sm border-0 mb-5">
+        <Card.Header className="bg-cafe-oscuro text-white">
+          <h5 className="mb-0"><i className="fas fa-search me-2"></i>Buscar Cafés</h5>
+        </Card.Header>
+        <Card.Body className="bg-crema">
+          <Form onSubmit={handleSearch}>
+            <Row className="g-3 align-items-end">
+              <Col md={5}>
+                <Form.Label className="fw-bold text-cafe-oscuro">Buscar por Nombre</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  placeholder="Ej: Etiopía Yirgacheffe, Colombia Supremo..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="border-cafe-claro"
                 />
+              </Col>
+              <Col md={2}>
+                <Form.Label className="fw-bold text-cafe-oscuro">Precio Mín.</Form.Label>
+                <Form.Control 
+                  type="number" 
+                  placeholder="$ CLP" 
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="border-cafe-claro"
+                />
+              </Col>
+              <Col md={2}>
+                <Form.Label className="fw-bold text-cafe-oscuro">Precio Máx.</Form.Label>
+                <Form.Control 
+                  type="number" 
+                  placeholder="$ CLP" 
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="border-cafe-claro"
+                />
+              </Col>
+              <Col md={3}>
+                <Button type="submit" className="btn-cafe-primary w-100">
+                  <i className="fas fa-search me-2"></i>Buscar
+                </Button>
+                <Button variant="outline-cafe-light" type="button" onClick={clearFilters} className="w-100 mt-2">
+                  <i className="fas fa-times me-2"></i>Limpiar
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      {products.length === 0 ? (
+        <div className="text-center py-5">
+          <i className="fas fa-search fa-4x text-cafe-claro mb-3"></i>
+          <h4 className="text-cafe-oscuro">No se encontraron productos</h4>
+          <p className="text-texto-claro">Intenta con otros términos de búsqueda o ajusta los filtros</p>
+        </div>
+      ) : (
+        <Row>
+          {products.map(product => (
+            <Col md={6} lg={4} className="mb-4" key={product.id}>
+              <Card className="h-100 product-card shadow-sm border-0">
+                <div className="card-img-wrapper position-relative overflow-hidden">
+                  <Card.Img 
+                    variant="top" 
+                    src={product.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'} 
+                    className="product-image"
+                  />
+                  {product.stock === 0 && (
+                    <div className="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 small">
+                      <i className="fas fa-times me-1"></i>Sin Stock
+                    </div>
+                  )}
+                </div>
                 <Card.Body className="d-flex flex-column">
-                  <Card.Title>{product.nombre}</Card.Title>
-                  <Card.Text style={{ minHeight: '60px' }}>
+                  <div className="product-category small text-cafe-claro mb-2 text-uppercase">
+                    <i className="fas fa-tag me-1"></i>Café Premium
+                  </div>
+                  <Card.Title className="fw-bold text-cafe-oscuro">{product.nombre}</Card.Title>
+                  <Card.Text className="flex-grow-1 text-texto-claro small" style={{ minHeight: '60px' }}>
                     {product.descripcion}
                   </Card.Text>
-                  <Card.Subtitle className="mb-2 text-muted">
-                    ${new Intl.NumberFormat('es-CL').format(product.precio)}
-                  </Card.Subtitle>
-                  <Card.Text>
-                    <small>Stock: {product.stock}</small>
-                  </Card.Text>
+                  
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="h5 text-cafe-medio fw-bold mb-0">
+                      ${new Intl.NumberFormat('es-CL').format(product.precio)}
+                    </span>
+                    <span className={`badge ${product.stock > 10 ? 'bg-verde-cafe' : product.stock > 0 ? 'bg-warning' : 'bg-danger'}`}>
+                      <i className="fas fa-box me-1"></i>{product.stock} unidades
+                    </span>
+                  </div>
+                  
                   <Button 
-                    variant="primary" 
+                    className={`mt-auto ${product.stock > 0 ? 'btn-cafe-primary' : 'btn-secondary'}`}
                     onClick={() => handleBuy(product.id)} 
                     disabled={product.stock === 0}
-                    className="mt-auto"
                   >
-                    {product.stock === 0 ? 'Sin Stock' : 'Comprar'}
+                    {product.stock === 0 ? (
+                      <><i className="fas fa-times me-2"></i>Agotado</>
+                    ) : (
+                      <><i className="fas fa-shopping-cart me-2"></i>Comprar Ahora</>
+                    )}
                   </Button>
                 </Card.Body>
               </Card>
             </Col>
-          ))
-        )}
-      </Row>
+          ))}
+        </Row>
+      )}
       
-      <Row className="justify-content-center mt-3">
-        <Col md="auto">
-          <Pagination>
-            <Pagination.Prev 
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 0}
-            />
-            
-            {[...Array(totalPages).keys()].map(pageNumber => (
-              <Pagination.Item 
-                key={pageNumber} 
-                active={pageNumber === currentPage}
-                onClick={() => handlePageChange(pageNumber)}
-              >
-                {pageNumber + 1}
-              </Pagination.Item>
-            ))}
+      {totalPages > 1 && (
+        <Row className="justify-content-center mt-5">
+          <Col md="auto">
+            <Pagination>
+              <Pagination.Prev 
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                className="page-cafe"
+              />
+              
+              {[...Array(totalPages).keys()].map(pageNumber => (
+                <Pagination.Item 
+                  key={pageNumber} 
+                  active={pageNumber === currentPage}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className={pageNumber === currentPage ? 'bg-cafe-medio border-cafe-medio' : 'text-cafe-oscuro'}
+                >
+                  {pageNumber + 1}
+                </Pagination.Item>
+              ))}
 
-            <Pagination.Next 
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage + 1 >= totalPages}
-            />
-          </Pagination>
-        </Col>
-      </Row>
+              <Pagination.Next 
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage + 1 >= totalPages}
+                className="page-cafe"
+              />
+            </Pagination>
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 }

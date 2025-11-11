@@ -1,38 +1,102 @@
-.App {
-  text-align: center;
+/* Agrega esto en tu App.css principal */
+.cafe-navbar {
+  background: linear-gradient(135deg, var(--cafe-oscuro), var(--cafe-medio));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--cafe-dorado);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.hero-section {
+  background: linear-gradient(rgba(62, 39, 35, 0.8), rgba(62, 39, 35, 0.9)), 
+              url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  margin-top: 76px; /* Compensa navbar fixed */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.btn-cafe-primary {
+  background: linear-gradient(135deg, var(--cafe-medio), var(--cafe-oscuro));
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.btn-cafe-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(62, 39, 35, 0.3);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.btn-outline-cafe-light {
+  border: 2px solid var(--cafe-dorado);
+  color: var(--cafe-dorado);
+  background: transparent;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.btn-outline-cafe-light:hover {
+  background: var(--cafe-dorado);
+  color: var(--cafe-oscuro);
 }
+
+.product-card {
+  transition: all 0.3s ease;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.card-img-wrapper {
+  height: 250px;
+  overflow: hidden;
+}
+
+.product-image {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.card-overlay {
+  background: rgba(62, 39, 35, 0.9);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .card-overlay {
+  opacity: 1;
+}
+
+.feature-card {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.feature-card:hover {
+  border-color: var(--cafe-dorado);
+  transform: translateY(-5px);
+}
+
+.text-cafe-oscuro { color: var(--cafe-oscuro) !important; }
+.text-cafe-medio { color: var(--cafe-medio) !important; }
+.text-cafe-claro { color: var(--cafe-claro) !important; }
+.text-cafe-dorado { color: var(--cafe-dorado) !important; }
+.text-verde-cafe { color: var(--verde-cafe) !important; }
+.text-texto-claro { color: var(--texto-claro) !important; }
+
+.bg-cafe-oscuro { background-color: var(--cafe-oscuro) !important; }
+.bg-cafe-medio { background-color: var(--cafe-medio) !important; }
+.bg-crema { background-color: var(--crema) !important; }
