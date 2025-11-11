@@ -1,63 +1,95 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../services/apiClient';
 import { useAuth } from '../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast'; 
+
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import InputGroup from 'react-bootstrap/InputGroup'; // ¡Importado!
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  
+  const [showPassword, setShowPassword] = useState(false); // ¡Añadido!
   const { login } = useAuth();
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (event) => {
     event.preventDefault(); 
-    const loginUrl = 'http://localhost:8081/api/login';
-
+    
     try {
-      const response = await axios.post(loginUrl, {
+      const response = await apiClient.post('/login', {
         email: email,
         password: password
       });
 
-      console.log('Login exitoso!', response.data);
-      
       const userData = { email: email, rol: response.data.rol };
       const authToken = response.data.token;
-      login(userData, authToken);
+      login(userData, authToken); 
 
-      setMessage('¡Login exitoso! Redirigiendo...');
+      toast.success('¡Login exitoso!');
+      
+      if (response.data.rol === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/catalogo');
+      }
 
     } catch (error) {
-      console.error('Error en el login:', error.response.data);
-      setMessage('Error: ' + error.response.data);
+      toast.error('Error: Credenciales inválidas'); 
+      console.error(error);
     }
   };
 
   return (
-    <div>
-      <h2>Iniciar Sesión en CoffeeLink</h2>
-      <form onSubmit={handleSubmit}>
-         <div>
-          <label>Email:</label>
-          <input 
-            type="email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Contraseña:</label>
-          <input 
-            type="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Entrar</button>
-      </form>
+    <Container className="mt-5">
+      <Row className="justify-content-md-center">
+        <Col md={6} lg={4}>
+          <h2 className="text-center mb-4">Iniciar Sesión</h2>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control 
+                type="email" 
+                placeholder="Ingresa tu email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
 
-      {message && <p>{message}</p>}
-    </div>
+            {/* --- SECCIÓN DE CONTRASEÑA ACTUALIZADA --- */}
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Contraseña</Form.Label>
+              <InputGroup>
+                <Form.Control 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="Contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? "Ocultar" : "Mostrar"}
+                </Button>
+              </InputGroup>
+            </Form.Group>
+            {/* ------------------------------------------- */}
+            
+            <Button variant="primary" type="submit" className="w-100">
+              Entrar
+            </Button>
+          </Form>
+          <div className="text-center mt-3">
+            ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
