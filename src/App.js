@@ -8,6 +8,8 @@ import Register from './components/Register.js';
 import Home from './components/Home';
 import { useAuth } from './context/AuthContext.js'; 
 import { Toaster } from 'react-hot-toast';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css'; 
 import './styles/cafe-theme.css';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
