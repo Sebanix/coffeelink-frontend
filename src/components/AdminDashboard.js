@@ -62,7 +62,7 @@ function AdminDashboard() {
     setDescripcion('');
     setPrecio('');
     setStock('');
-    setImagenUrl(''); // Limpia la URL
+    setImagenUrl('');
   };
 
   const handleSubmit = async (event) => {
@@ -138,41 +138,90 @@ function AdminDashboard() {
 
   return (
     <Container className="mt-4">
+      <div className="text-center mb-5">
+        <h1 className="display-5 fw-bold text-cafe-oscuro mb-3">
+          <i className="fas fa-cog me-2"></i>
+          Panel de Administración
+        </h1>
+        <p className="lead text-texto-claro">Gestiona los productos de CoffeeLink</p>
+      </div>
+
       <Row>
         <Col md={4}>
-          <Card>
-            <Card.Body>
-              <Card.Title>{editingId ? `Editando Producto (ID: ${editingId})` : 'Crear Producto'}</Card.Title>
+          <Card className="shadow-sm border-0">
+            <Card.Header className="bg-cafe-oscuro text-white py-3">
+              <h5 className="mb-0">
+                <i className="fas fa-plus me-2"></i>
+                {editingId ? `Editando Producto` : 'Crear Producto'}
+              </h5>
+            </Card.Header>
+            <Card.Body className="bg-crema">
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Nombre:</Form.Label>
-                  <Form.Control type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Descripción:</Form.Label>
-                  <Form.Control as="textarea" rows={3} value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-                </Form.Group>
-                
-                {/* --- ¡NUEVO CAMPO DE FORMULARIO! --- */}
-                <Form.Group className="mb-3">
-                  <Form.Label>URL de Imagen:</Form.Label>
-                  <Form.Control type="text" placeholder="https://..." value={imagenUrl} onChange={(e) => setImagenUrl(e.target.value)} />
+                  <Form.Label className="fw-bold text-cafe-oscuro">Nombre:</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    value={nombre} 
+                    onChange={(e) => setNombre(e.target.value)} 
+                    required 
+                    className="border-cafe-claro"
+                    placeholder="Nombre del producto"
+                  />
                 </Form.Group>
                 
                 <Form.Group className="mb-3">
-                  <Form.Label>Precio (CLP):</Form.Label>
-                  <Form.Control type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} required />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Stock:</Form.Label>
-                  <Form.Control type="number" value={stock} onChange={(e) => setStock(e.target.value)} required />
+                  <Form.Label className="fw-bold text-cafe-oscuro">Descripción:</Form.Label>
+                  <Form.Control 
+                    as="textarea" 
+                    rows={3} 
+                    value={descripcion} 
+                    onChange={(e) => setDescripcion(e.target.value)} 
+                    className="border-cafe-claro"
+                    placeholder="Descripción del producto"
+                  />
                 </Form.Group>
                 
-                <Button variant="primary" type="submit" className="w-100">
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold text-cafe-oscuro">URL de Imagen:</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    placeholder="https://..." 
+                    value={imagenUrl} 
+                    onChange={(e) => setImagenUrl(e.target.value)} 
+                    className="border-cafe-claro"
+                  />
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold text-cafe-oscuro">Precio (CLP):</Form.Label>
+                  <Form.Control 
+                    type="number" 
+                    value={precio} 
+                    onChange={(e) => setPrecio(e.target.value)} 
+                    required 
+                    className="border-cafe-claro"
+                    placeholder="Precio en pesos chilenos"
+                  />
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold text-cafe-oscuro">Stock:</Form.Label>
+                  <Form.Control 
+                    type="number" 
+                    value={stock} 
+                    onChange={(e) => setStock(e.target.value)} 
+                    required 
+                    className="border-cafe-claro"
+                    placeholder="Cantidad disponible"
+                  />
+                </Form.Group>
+                
+                <Button variant="cafe-primary" type="submit" className="w-100 btn-cafe-primary">
                   {editingId ? 'Actualizar Producto' : 'Crear Producto'}
                 </Button>
+                
                 {editingId && (
-                  <Button variant="secondary" onClick={resetForm} className="w-100 mt-2">
+                  <Button variant="outline-cafe-light" onClick={resetForm} className="w-100 mt-2">
                     Cancelar Edición
                   </Button>
                 )}
@@ -182,66 +231,95 @@ function AdminDashboard() {
         </Col>
         
         <Col md={8}>
-          <h2>Gestionar Productos</h2>
-          {loading ? (
-             <div className="text-center">
-                <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Cargando...</span>
-                </Spinner>
-              </div>
-          ) : (
-            <>
-              <Table striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Stock</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map(product => (
-                    <tr key={product.id}>
-                      <td>{product.id}</td>
-                      <td>{product.nombre}</td>
-                      <td>${new Intl.NumberFormat('es-CL').format(product.precio)}</td>
-                      <td>{product.stock}</td>
-                      <td>
-                        <Button variant="warning" size="sm" onClick={() => handleEditClick(product)} className="me-2">
-                          Editar
-                        </Button>
-                        <Button variant="danger" size="sm" onClick={() => handleDelete(product.id)}>
-                          Eliminar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              
-              <Pagination className="justify-content-center">
-                <Pagination.Prev 
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 0}
-                />
-                <Pagination.Item active>{currentPage + 1}</Pagination.Item>
-                {totalPages > 1 && (
-                  <>
-                    <Pagination.Ellipsis disabled />
-                    <Pagination.Item onClick={() => handlePageChange(totalPages - 1)}>
-                      {totalPages}
-                    </Pagination.Item>
-                  </>
-                )}
-                <Pagination.Next 
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage + 1 >= totalPages}
-                />
-              </Pagination>
-            </>
-          )}
+          <Card className="shadow-sm border-0">
+            <Card.Header className="bg-cafe-medio text-white py-3">
+              <h5 className="mb-0">
+                <i className="fas fa-list me-2"></i>
+                Lista de Productos
+              </h5>
+            </Card.Header>
+            <Card.Body>
+              {loading ? (
+                <div className="text-center py-4">
+                  <Spinner animation="border" role="status" className="text-cafe-medio">
+                    <span className="visually-hidden">Cargando...</span>
+                  </Spinner>
+                  <p className="mt-2 text-texto-claro">Cargando productos...</p>
+                </div>
+              ) : (
+                <>
+                  <Table striped bordered hover responsive className="mb-0">
+                    <thead className="bg-crema">
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.map(product => (
+                        <tr key={product.id}>
+                          <td className="fw-bold text-cafe-oscuro">{product.id}</td>
+                          <td>{product.nombre}</td>
+                          <td className="text-success fw-bold">${new Intl.NumberFormat('es-CL').format(product.precio)}</td>
+                          <td>
+                            <span className={`badge ${product.stock > 10 ? 'bg-verde-cafe' : product.stock > 0 ? 'bg-warning' : 'bg-danger'}`}>
+                              {product.stock} unidades
+                            </span>
+                          </td>
+                          <td>
+                            <Button 
+                              variant="outline-warning" 
+                              size="sm" 
+                              onClick={() => handleEditClick(product)} 
+                              className="me-2"
+                            >
+                              <i className="fas fa-edit me-1"></i>Editar
+                            </Button>
+                            <Button 
+                              variant="outline-danger" 
+                              size="sm" 
+                              onClick={() => handleDelete(product.id)}
+                            >
+                              <i className="fas fa-trash me-1"></i>Eliminar
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                  
+                  {totalPages > 1 && (
+                    <div className="mt-3">
+                      <Pagination className="justify-content-center mb-0">
+                        <Pagination.Prev 
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 0}
+                        />
+                        
+                        {[...Array(totalPages).keys()].map(pageNumber => (
+                          <Pagination.Item 
+                            key={pageNumber} 
+                            active={pageNumber === currentPage}
+                            onClick={() => handlePageChange(pageNumber)}
+                          >
+                            {pageNumber + 1}
+                          </Pagination.Item>
+                        ))}
+
+                        <Pagination.Next 
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage + 1 >= totalPages}
+                        />
+                      </Pagination>
+                    </div>
+                  )}
+                </>
+              )}
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>

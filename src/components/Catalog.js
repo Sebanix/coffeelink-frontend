@@ -9,12 +9,13 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Pagination from 'react-bootstrap/Pagination';
+import { useAuth } from '../context/AuthContext';
 
 function Catalog() {
+  const { user, addToCart } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -81,21 +82,24 @@ const handleSearch = (e) => {
     }
   };
 
-  const handleBuy = async (productId) => {
-    const buyUrl = `/comprar/${productId}`;
-    try {
-      const response = await apiClient.post(buyUrl, { cantidad: 1 });
-      toast.success('¡Compra exitosa! Pedido creado: Nro ' + response.data.id);
-    } catch (err) {
-      if (err.response && err.response.status === 409) {
-        toast.error('Error: ¡No hay stock suficiente de este producto!');
-      } else if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-        toast.error('Error: Tu sesión es inválida o no tienes permisos. Por favor, vuelve a iniciar sesión.');
-      } else {
-        toast.error('Ocurrió un error inesperado al comprar.');
-      }
+const handleAddToCart = (product) => {
+    if (!user) {
+      toast.error('Debes iniciar sesión para agregar productos al carrito.');
+      return;
     }
-  }; 
+    
+    if (user.rol !== 'cliente') { 
+        toast.error('Solo los clientes pueden agregar productos al carrito.');
+        return;
+    }
+
+    if (product.stock === 0) {
+      toast.error('Producto agotado, no se puede agregar al carrito.');
+      return;
+    }
+
+    addToCart(product);
+};
 
   if (loading) {
     return (
@@ -187,18 +191,18 @@ const handleSearch = (e) => {
           {products.map(product => (
             <Col md={6} lg={4} className="mb-4" key={product.id}>
               <Card className="h-100 product-card shadow-sm border-0">
-                <div className="card-img-wrapper position-relative overflow-hidden">
-                  <Card.Img 
-                    variant="top" 
-                    src={product.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'} 
-                    className="product-image"
-                  />
-                  {product.stock === 0 && (
-                    <div className="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 small">
-                      <i className="fas fa-times me-1"></i>Sin Stock
-                    </div>
-                  )}
-                </div>
+                  <div className="card-img-wrapper position-relative overflow-hidden">
+                    <Card.Img 
+                      variant="top" 
+                      src={product.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'} 
+                      className="product-image"
+                    />
+                    {product.stock === 0 && (
+                      <div className="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 small">
+                        <i className="fas fa-times me-1"></i>Sin Stock
+                      </div>
+                    )}
+                  </div>
                 <Card.Body className="d-flex flex-column">
                   <div className="product-category small text-cafe-claro mb-2 text-uppercase">
                     <i className="fas fa-tag me-1"></i>Café Premium
@@ -218,15 +222,15 @@ const handleSearch = (e) => {
                   </div>
                   
                   <Button 
-                    className={`mt-auto ${product.stock > 0 ? 'btn-cafe-primary' : 'btn-secondary'}`}
-                    onClick={() => handleBuy(product.id)} 
-                    disabled={product.stock === 0}
+                      className={`mt-auto ${product.stock > 0 ? 'btn-cafe-primary' : 'btn-secondary'}`}
+                      onClick={() => handleAddToCart(product)} 
+                      disabled={product.stock === 0}
                   >
-                    {product.stock === 0 ? (
-                      <><i className="fas fa-times me-2"></i>Agotado</>
-                    ) : (
-                      <><i className="fas fa-shopping-cart me-2"></i>Comprar Ahora</>
-                    )}
+                      {product.stock === 0 ? (
+                          <><i className="fas fa-times me-2"></i>Agotado</>
+                      ) : (
+                          <><i className="fas fa-shopping-cart me-2"></i>Agregar al Carrito</>
+                      )}
                   </Button>
                 </Card.Body>
               </Card>
@@ -238,11 +242,11 @@ const handleSearch = (e) => {
       {totalPages > 1 && (
         <Row className="justify-content-center mt-5">
           <Col md="auto">
-            <Pagination>
+            <Pagination className="catalog-pagination">
               <Pagination.Prev 
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 0}
-                className="page-cafe"
+                className={currentPage === 0 ? 'disabled' : ''}
               />
               
               {[...Array(totalPages).keys()].map(pageNumber => (
@@ -250,7 +254,6 @@ const handleSearch = (e) => {
                   key={pageNumber} 
                   active={pageNumber === currentPage}
                   onClick={() => handlePageChange(pageNumber)}
-                  className={pageNumber === currentPage ? 'bg-cafe-medio border-cafe-medio' : 'text-cafe-oscuro'}
                 >
                   {pageNumber + 1}
                 </Pagination.Item>
@@ -259,7 +262,7 @@ const handleSearch = (e) => {
               <Pagination.Next 
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage + 1 >= totalPages}
-                className="page-cafe"
+                className={currentPage + 1 >= totalPages ? 'disabled' : ''}
               />
             </Pagination>
           </Col>

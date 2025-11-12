@@ -50,7 +50,7 @@ function Login() {
   };
 
   return (
-    <Container className="mt-5 pt-4">
+    <Container className="auth-page">
       <Row className="justify-content-center align-items-center min-vh-50">
         <Col md={6} lg={5} xl={4}>
           <Card className="shadow-lg border-0 login-card">
